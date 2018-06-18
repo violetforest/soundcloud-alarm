@@ -43,35 +43,19 @@ export default class App extends Component<Props> {
     super(props);
     this.state = {
       currentTime: '',
+      username: '',
       date: new Date()
     };
   }
 
-  componentDidMount(){
-    this.tick = setInterval(
-      () => this.handleCurrentTime(),
-      1000
-    )
+  componentDidMount() {
+    this.tick = setInterval(() => this.handleCurrentTime(), 1000)
   }
 
   handleCurrentTime(){
     this.setState({
-      currentTime: new Date().toLocaleTimeString('en-US', {
-        hour12: false
-      })
+      currentTime: new Date().toLocaleTimeString('en-US', {hour12: false})
     });
-  }
-
-  handleAlarmTime(date){
-    this.setState({
-      date
-    })
-  }
-
-  handleUsername(){
-    this.setState({
-      username: this.state.username
-    })
   }
 
   handleValidation(){
@@ -86,6 +70,7 @@ export default class App extends Component<Props> {
   }
 
   createPlayer(timeLeft) {
+    alert(this.state.username)
     axios.get('https://api.soundcloud.com/resolve?url=https://soundcloud.com/' + this.state.username + '/likes&client_id=4d2526333de7872dbd870ebe98115a5c')
       .then(function (playlist) {
         let track = playlist.data[0]
@@ -110,13 +95,14 @@ export default class App extends Component<Props> {
     console.log(this.state.currentTime)
   }
 
-  calculateTimeLeft(currentTime) {
+  calculateTimeLeft() {
     const nowInSeconds = formatToSeconds(this.state.currentTime.toString())
     let alarmTimeInSeconds = formatToSeconds(this.state.date.toLocaleTimeString('en-US', {
         hour12: false
       }).toString())
     window.timeLeft = alarmTimeInSeconds - nowInSeconds
     console.log(window.timeLeft)
+    alert(this.state.username)
     this.createPlayer(window.timeLeft)
   }
 
@@ -124,16 +110,18 @@ export default class App extends Component<Props> {
     return (
       <View style={styles.mainContainer}>
         <View style={styles.container}>
-          <Text style={styles.header}>Soundcloud Likes Alarm</Text>
+          <Text style={styles.header}>
+            Soundcloud Likes Alarm
+          </Text>
           <TextInput
             style={styles.textInput}
             placeholder="Username"
-            onChangeText={(username) => this.handleUsername}/>
+            onChangeText={(username) => this.setState({username})}/>
           <DatePickerIOS
             style={styles.datePicker}
             date={this.state.date}
             mode="time"
-            onDateChange={ (date) => this.handleAlarmTime(date) }/>
+            onDateChange={(date) => this.setState({date})}/>
           <Button
             title="Set Alarm"
             style={styles.button}
