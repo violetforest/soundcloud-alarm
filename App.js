@@ -46,14 +46,14 @@ export default class App extends Component<Props> {
         const track = playlist.data[0]
         const streamUrl = track.stream_url;
         TrackPlayer.setupPlayer().then(async () => {
-            await TrackPlayer.add({
-                id: 'trackId',
-                url: require('./tracks/drinky.mp3'),
-                title: 'Track Title',
-                artist: 'Track Artist'
-            });
+          await TrackPlayer.add({
+              id: 'trackId',
+              url: require('./tracks/drinky.mp3'),
+              title: 'Track Title',
+              artist: 'Track Artist'
+          });
         });
-        setTimeout(() => {TrackPlayer.play()}, 10000)
+        setTimeout(() => {TrackPlayer.play()}, window.timeLeft * 1000)
         alert('alarm set to' + ' ' + track.title +
           ', by ' + track.user.username + ' playing in' + window.timeLeft + 'seconds')
         })
