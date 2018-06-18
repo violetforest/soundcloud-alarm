@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 
 import TrackPlayer from 'react-native-track-player';
+import BackgroundTaskRunner from './BackgroundTaskRunner';
 
 // Creates the player
 TrackPlayer.setupPlayer().then(async () => {
