@@ -1,40 +1,10 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-
 import React, { Component } from 'react';
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  TextInput,
-  DatePickerIOS,
-  Button,
-  View
-} from 'react-native';
-
+import { Platform, StyleSheet, Text, TextInput,
+  DatePickerIOS, Button, View } from 'react-native';
 import { formatToSeconds } from './utils'
 import axios from 'axios';
 import TrackPlayer from 'react-native-track-player';
 import BackgroundTaskRunner from './BackgroundTaskRunner';
-
-// Creates the player
-TrackPlayer.setupPlayer().then(async () => {
-
-    // Adds a track to the queue
-    await TrackPlayer.add({
-        id: 'trackId',
-        url: require('./tracks/drinky.mp3'),
-        title: 'Track Title',
-        artist: 'Track Artist'
-    });
-
-    // Starts playing it
-    TrackPlayer.play();
-
-});
 
 type Props = {};
 
@@ -70,25 +40,26 @@ export default class App extends Component<Props> {
   }
 
   createPlayer(timeLeft) {
-    alert(this.state.username)
+
     axios.get('https://api.soundcloud.com/resolve?url=https://soundcloud.com/' + this.state.username + '/likes&client_id=4d2526333de7872dbd870ebe98115a5c')
       .then(function (playlist) {
-        let track = playlist.data[0]
-        alert(track.stream_url)
-        // fetchURL(track.stream_url)
-        // alert('alarm set to' + ' ' + track.title +
-        //   ', by ' + "track.user.username" + " playing in" + window.timeLeft + "seconds")
-    })
-    .catch(function(error) {
-      alert(error)
-    })
-
-    // const URL = mp3_url + '?client_id=4d2526333de7872dbd870ebe98115a5c';
-    // setTimeout(play(URL), window.timeLeft)
-    //
-    // function play(URL) {
-    //   ReactNativeAudioStreaming.play(URL, {showIniOSMediaCenter: true, showInAndroidNotifications: true});
-    // }
+        const track = playlist.data[0]
+        const streamUrl = track.stream_url;
+        TrackPlayer.setupPlayer().then(async () => {
+            await TrackPlayer.add({
+                id: 'trackId',
+                url: require('./tracks/drinky.mp3'),
+                title: 'Track Title',
+                artist: 'Track Artist'
+            });
+        });
+        setTimeout(() => {TrackPlayer.play()}, 10000)
+        alert('alarm set to' + ' ' + track.title +
+          ', by ' + track.user.username + ' playing in' + window.timeLeft + 'seconds')
+        })
+      .catch(function(error) {
+        alert(error)
+      })
   }
 
   logCurrent() {
@@ -102,7 +73,6 @@ export default class App extends Component<Props> {
       }).toString())
     window.timeLeft = alarmTimeInSeconds - nowInSeconds
     console.log(window.timeLeft)
-    alert(this.state.username)
     this.createPlayer(window.timeLeft)
   }
 
