@@ -21,9 +21,9 @@ export default class App extends Component<Props> {
 
   componentDidMount() {
     this.tick = setInterval(() => this.handleCurrentTime(), 1000)
-    this.interval = BackgroundTimer.setInterval(() => {
+    this.interval = BackgroundTimer.setTimeout(() => {
       console.log('okay baby')
-    }, 1000);
+    }, 10000);
   }
 
   handleCurrentTime(){
