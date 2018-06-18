@@ -12,6 +12,24 @@ import {
   View
 } from 'react-native';
 
+import TrackPlayer from 'react-native-track-player';
+
+// Creates the player
+TrackPlayer.setupPlayer().then(async () => {
+
+    // Adds a track to the queue
+    await TrackPlayer.add({
+        id: 'trackId',
+        url: require('./tracks/drinky.mp3'),
+        title: 'Track Title',
+        artist: 'Track Artist'
+    });
+
+    // Starts playing it
+    TrackPlayer.play();
+
+});
+
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' +
     'Cmd+D or shake for dev menu',
@@ -20,6 +38,7 @@ const instructions = Platform.select({
 });
 
 type Props = {};
+
 export default class App extends Component<Props> {
   render() {
     return (
