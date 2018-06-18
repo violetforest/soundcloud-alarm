@@ -44,11 +44,12 @@ export default class App extends Component<Props> {
     axios.get('https://api.soundcloud.com/resolve?url=https://soundcloud.com/' + this.state.username + '/likes&client_id=4d2526333de7872dbd870ebe98115a5c')
       .then(function (playlist) {
         const track = playlist.data[0]
-        const streamUrl = track.stream_url;
+        const streamUrl = track.stream_url + '?client_id=4d2526333de7872dbd870ebe98115a5c';
+        alert(streamUrl)
         TrackPlayer.setupPlayer().then(async () => {
           await TrackPlayer.add({
               id: 'trackId',
-              url: require('./tracks/drinky.mp3'),
+              url: streamUrl,
               title: 'Track Title',
               artist: 'Track Artist'
           });
