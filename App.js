@@ -4,6 +4,7 @@ import { Platform, StyleSheet, Text, TextInput,
 import { formatToSeconds } from './utils'
 import axios from 'axios';
 import TrackPlayer from 'react-native-track-player';
+import BackgroundTimer from 'react-native-background-timer';
 import BackgroundTaskRunner from './BackgroundTaskRunner';
 
 type Props = {};
@@ -20,6 +21,9 @@ export default class App extends Component<Props> {
 
   componentDidMount() {
     this.tick = setInterval(() => this.handleCurrentTime(), 1000)
+    this.interval = BackgroundTimer.setInterval(() => {
+      console.log('okay baby')
+    }, 1000);
   }
 
   handleCurrentTime(){
