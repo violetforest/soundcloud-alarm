@@ -9,9 +9,14 @@ import {
   Platform,
   StyleSheet,
   Text,
+  TextInput,
+  DatePickerIOS,
+  Button,
   View
 } from 'react-native';
 
+import { formatToSeconds } from './utils'
+import axios from 'axios';
 import TrackPlayer from 'react-native-track-player';
 import BackgroundTaskRunner from './BackgroundTaskRunner';
 
@@ -31,48 +36,151 @@ TrackPlayer.setupPlayer().then(async () => {
 
 });
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
-
 type Props = {};
 
 export default class App extends Component<Props> {
+  constructor(props) {
+    super(props);
+    this.state = {
+      currentTime: '',
+      date: new Date()
+    };
+  }
+
+  componentDidMount(){
+    this.tick = setInterval(
+      () => this.handleCurrentTime(),
+      1000
+    )
+  }
+
+  handleCurrentTime(){
+    this.setState({
+      currentTime: new Date().toLocaleTimeString('en-US', {
+        hour12: false
+      })
+    });
+  }
+
+  handleAlarmTime(date){
+    this.setState({
+      date
+    })
+  }
+
+  handleUsername(){
+    this.setState({
+      username: this.state.username
+    })
+  }
+
+  handleValidation(){
+    let formIsValid = true;
+    if(this.state.username == 'undefined' || !this.state.username || this.state.date == 'undefined' || !this.state.date){
+      formIsValid = false
+      alert("Invalid form")
+    } else {
+      formIsValid = true
+    }
+    return formIsValid
+  }
+
+  createPlayer(timeLeft) {
+    axios.get('https://api.soundcloud.com/resolve?url=https://soundcloud.com/' + this.state.username + '/likes&client_id=4d2526333de7872dbd870ebe98115a5c')
+      .then(function (playlist) {
+        let track = playlist.data[0]
+        alert(track.stream_url)
+        // fetchURL(track.stream_url)
+        // alert('alarm set to' + ' ' + track.title +
+        //   ', by ' + "track.user.username" + " playing in" + window.timeLeft + "seconds")
+    })
+    .catch(function(error) {
+      alert(error)
+    })
+
+    // const URL = mp3_url + '?client_id=4d2526333de7872dbd870ebe98115a5c';
+    // setTimeout(play(URL), window.timeLeft)
+    //
+    // function play(URL) {
+    //   ReactNativeAudioStreaming.play(URL, {showIniOSMediaCenter: true, showInAndroidNotifications: true});
+    // }
+  }
+
+  logCurrent() {
+    console.log(this.state.currentTime)
+  }
+
+  calculateTimeLeft(currentTime) {
+    const nowInSeconds = formatToSeconds(this.state.currentTime.toString())
+    let alarmTimeInSeconds = formatToSeconds(this.state.date.toLocaleTimeString('en-US', {
+        hour12: false
+      }).toString())
+    window.timeLeft = alarmTimeInSeconds - nowInSeconds
+    console.log(window.timeLeft)
+    this.createPlayer(window.timeLeft)
+  }
+
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit App.js
-        </Text>
-        <Text style={styles.instructions}>
-          {instructions}
-        </Text>
+      <View style={styles.mainContainer}>
+        <View style={styles.container}>
+          <Text style={styles.header}>Soundcloud Likes Alarm</Text>
+          <TextInput
+            style={styles.textInput}
+            placeholder="Username"
+            onChangeText={(username) => this.handleUsername}/>
+          <DatePickerIOS
+            style={styles.datePicker}
+            date={this.state.date}
+            mode="time"
+            onDateChange={ (date) => this.handleAlarmTime(date) }/>
+          <Button
+            title="Set Alarm"
+            style={styles.button}
+            onPress={(currentTime) => this.calculateTimeLeft(currentTime)}/>
+        </View>
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
+  mainContainer: {
+    backgroundColor: 'white',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    justifyContent: 'center',
+    flex: 1,
+    flexDirection: 'column',
+    flexWrap: 'wrap',
+    height: '100%'
   },
-  welcome: {
-    fontSize: 20,
+  container: {
+    width: '80%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 40
+  },
+  header: {
+    fontSize: 30,
+    marginBottom: 40,
+    fontWeight: 'bold'
+  },
+  datePicker: {
+    height: 'auto',
+    width: '100%',
+    backgroundColor: '#fff'
+  },
+  textInput: {
+    width: '100%',
+    height: 40,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
     textAlign: 'center',
-    margin: 10,
+    borderRadius: 0,
+    marginBottom: 40
   },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
+  button: {
+    backgroundColor: 'yellow'
+  }
+})
