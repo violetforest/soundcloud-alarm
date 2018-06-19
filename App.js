@@ -58,7 +58,18 @@ export default class App extends Component<Props> {
               artist: 'Track Artist'
           });
         });
-        BackgroundTimer.setTimeout(() => {TrackPlayer.play()}, window.timeLeft * 1000)
+        BackgroundTimer.setTimeout(() => {
+          TrackPlayer.setupPlayer().then(async () => {
+            await TrackPlayer.add({
+                id: 'trackId',
+                url: streamUrl,
+                title: 'Track Title',
+                artist: 'Track Artist'
+            });
+          });
+          TrackPlayer.play()
+          console.log('this is working')
+        }, window.timeLeft * 1000)
         alert('alarm set to' + ' ' + track.title +
           ', by ' + track.user.username + ' playing in' + window.timeLeft + 'seconds')
         })
