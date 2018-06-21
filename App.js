@@ -49,24 +49,25 @@ export default class App extends Component<Props> {
       .then(function (playlist) {
         const track = playlist.data[0]
         const streamUrl = track.stream_url + '?client_id=4d2526333de7872dbd870ebe98115a5c';
-        alert(streamUrl)
+        const streamTitle = track.title + '?client_id=4d2526333de7872dbd870ebe98115a5c';
+        const streamUser = track.stream_url + '?client_id=4d2526333de7872dbd870ebe98115a5c';
         TrackPlayer.setupPlayer().then(async () => {
           await TrackPlayer.add({
               id: 'trackId',
               url: streamUrl,
-              title: 'Track Title',
-              artist: 'Track Artist'
+              title: streamTitle,
+              artist: streamUser
           });
-          TrackPlayer.updateOptions({
-            stopWithApp: false
-          })
         });
+        TrackPlayer.updateOptions({
+          stopWithApp: false
+        })
         BackgroundTimer.setTimeout(() => {
           TrackPlayer.play()
           console.log('this is working')
         }, window.timeLeft * 1000)
         alert('alarm set to' + ' ' + track.title +
-          ', by ' + track.user.username + ' playing in' + window.timeLeft + 'seconds')
+          ', by ' + track.user.username + ' playing in' + window.timeLeft + ' seconds')
         })
       .catch(function(error) {
         alert(error)
